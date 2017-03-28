@@ -34,6 +34,7 @@ namespace Bonobo.Git.Server.Models
         public string GivenName { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
+        public string Mac { get; set; }
 
         public string DisplayName
         {
@@ -96,6 +97,10 @@ namespace Bonobo.Git.Server.Models
         [DataType(DataType.EmailAddress)]
         [Display(ResourceType = typeof(Resources), Name = "Account_Edit_Email")]
         public string Email { get; set; }
+        
+        [Required(ErrorMessageResourceType = typeof(Resources), ErrorMessageResourceName = "Validation_Required")]
+        [Display(ResourceType = typeof(Resources), Name = "Account_Edit_Mac")]
+        public string Mac { get; set; }
 
         [DataType(DataType.Password)]
         [Display(ResourceType = typeof(Resources), Name = "Account_Edit_CurrentPassword")]
@@ -131,6 +136,9 @@ namespace Bonobo.Git.Server.Models
 
         [Display(ResourceType = typeof(Resources), Name = "Account_Detail_Email")]
         public string Email { get; set; }
+        
+        [Display(ResourceType = typeof(Resources), Name = "Account_Detail_Mac")]
+        public string Mac { get; set; }
 
         [Display(ResourceType = typeof(Resources), Name = "Account_Detail_Roles")]
         public string[] Roles { get; set; }
@@ -159,6 +167,11 @@ namespace Bonobo.Git.Server.Models
         [StringLength(50, ErrorMessageResourceType = typeof(Resources), ErrorMessageResourceName = "Validation_StringLength")]
         [Display(ResourceType = typeof(Resources), Name = "Account_Create_Surname")]
         public string Surname { get; set; }
+
+        [Required(ErrorMessageResourceType = typeof(Resources), ErrorMessageResourceName = "Validation_Required")]
+        [StringLength(12, ErrorMessageResourceType = typeof(Resources), ErrorMessageResourceName = "Validation_StringLength")]
+        [Display(ResourceType = typeof(Resources), Name = "Account_Create_Mac")]
+        public string Mac { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(Resources), ErrorMessageResourceName = "Validation_Required")]
         [StringLength(50, ErrorMessageResourceType = typeof(Resources), ErrorMessageResourceName = "Validation_StringLength")]
