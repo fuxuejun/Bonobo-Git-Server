@@ -49,6 +49,7 @@
         grid.Column("Name", typeof(UserDetailModel).GetDisplayValue("Name")),
             grid.Column("Surname", typeof(UserDetailModel).GetDisplayValue("Surname")),
             grid.Column("Email", typeof(UserDetailModel).GetDisplayValue("Email")),
+            grid.Column("Mac", typeof(UserDetailModel).GetDisplayValue("Mac")),
             grid.Column(format: (item) => item.IsReadOnly ? Html.Raw(String.Empty) : Html.ActionLink(" ", "Edit", new { id = item.Id }, new { @class = "edit", title = Resources.Grid_Edit }), style: "action"),
             grid.Column(format: (item) => item.IsReadOnly ? Html.Raw(String.Empty) : Html.ActionLink(" ", "Delete", new { id = item.Id }, new { @class = "delete", title = Resources.Grid_Delete }), style: "action")
         )

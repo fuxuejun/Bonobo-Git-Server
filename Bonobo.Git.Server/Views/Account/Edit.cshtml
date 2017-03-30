@@ -56,6 +56,14 @@ else
                         @Html.ValidationMessageFor(m => m.OldPassword)
                     </div>
                 }
+                else
+                {
+                    <div class="pure-control-group">
+                        @Html.LabelFor(m => m.Mac)
+                        @Html.TextBoxFor(m => m.Mac)<em>*</em>
+                        @Html.ValidationMessageFor(m => m.Mac)
+                    </div>
+                }
                 <div class="pure-control-group">
                     @Html.LabelFor(m => m.NewPassword)
                     @Html.PasswordFor(m => m.NewPassword)<em>*</em>

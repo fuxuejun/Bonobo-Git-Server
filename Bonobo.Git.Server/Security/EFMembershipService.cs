@@ -5,6 +5,7 @@ using Bonobo.Git.Server.Data;
 using Bonobo.Git.Server.Models;
 using System.Security.Cryptography;
 using System.Data.Entity.Core;
+using Bonobo.Git.Server.Helpers;
 using Microsoft.Practices.Unity;
 
 namespace Bonobo.Git.Server.Security
@@ -27,7 +28,7 @@ namespace Bonobo.Git.Server.Security
                         var user = db.Users.FirstOrDefault(i => i.Username == username);
                         if (user != null)
                         {
-                            UpdateUser(user.Id, null, null, null, null, password);
+                            UpdateUser(user.Id, null, null, null, null, null, password);
                         }
                     }
                 };
@@ -48,22 +49,32 @@ namespace Bonobo.Git.Server.Security
             using (var database = CreateContext())
             {
                 var user = database.Users.FirstOrDefault(i => i.Username == username);
+                if (user != null && IpMacValidator.Validate(user.Mac))
+                {
+                    return ValidationResult.Success;
+                }
                 return user != null && _passwordService.ComparePassword(password, username, user.PasswordSalt, user.Password) ? ValidationResult.Success : ValidationResult.Failure;
             }
         }
 
-        public bool CreateUser(string username, string password, string givenName, string surname, string email)
+        public bool CreateUser(string username, string password, string givenName, string surname, string mac, string email)
         {
-            return CreateUser(username, password, givenName, surname, email, Guid.NewGuid());
+            return CreateUser(username, password, givenName, surname, email, mac, Guid.NewGuid());
         }
 
         public bool CreateUser(string username, string password, string givenName, string surname, string email, Guid id)
+        {
+            return CreateUser(username, password, givenName, surname, email, "ttttt", Guid.NewGuid());
+        }
+
+        public bool CreateUser(string username, string password, string givenName, string surname, string email, string mac, Guid id)
         {
             if (String.IsNullOrEmpty(username)) throw new ArgumentException("Value cannot be null or empty.", "username");
             if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
             if (String.IsNullOrEmpty(givenName)) throw new ArgumentException("Value cannot be null or empty.", "givenName");
             if (String.IsNullOrEmpty(surname)) throw new ArgumentException("Value cannot be null or empty.", "surname");
             if (String.IsNullOrEmpty(email)) throw new ArgumentException("Value cannot be null or empty.", "email");
+            if (String.IsNullOrEmpty(mac)) throw new ArgumentException("Value cannot be null or empty.", "mac");
             if (id == Guid.Empty) throw new ArgumentException("Id must be a proper Guid", "id");
 
             username = username.ToLowerInvariant();
@@ -76,6 +87,7 @@ namespace Bonobo.Git.Server.Security
                     GivenName = givenName,
                     Surname = surname,
                     Email = email,
+                    Mac = mac
                 };
                 SetPassword(user, password);
                 database.Users.Add(user);
@@ -146,7 +158,7 @@ namespace Bonobo.Git.Server.Security
             }
         }
 
-        public void UpdateUser(Guid id, string username, string givenName, string surname, string email, string password)
+        public void UpdateUser(Guid id, string username, string givenName, string surname, string email, string mac, string password)
         {
             using (var db = CreateContext())
             {
@@ -158,6 +170,7 @@ namespace Bonobo.Git.Server.Security
                     user.GivenName = givenName ?? user.GivenName;
                     user.Surname = surname ?? user.Surname;
                     user.Email = email ?? user.Email;
+                    user.Mac = mac ?? user.Mac;
                     if (password != null)
                     {
                         SetPassword(user, password);

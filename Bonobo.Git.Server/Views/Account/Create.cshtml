@@ -32,6 +32,11 @@
             @Html.ValidationMessageFor(m => m.Email)
         </div> 
         <div class="pure-control-group">
+            @Html.LabelFor(m => m.Mac)
+            @Html.TextBoxFor(m => m.Mac)<em>*</em>
+            @Html.ValidationMessageFor(m => m.Mac)
+        </div> 
+        <div class="pure-control-group">
             @Html.LabelFor(m => m.Password)
             @Html.PasswordFor(m => m.Password)<em>*</em>
             @Html.ValidationMessageFor(m => m.Password)

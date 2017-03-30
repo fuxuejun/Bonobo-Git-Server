@@ -29,6 +29,10 @@ else
                 <span>@Model.Email</span>
             </div>
             <div class="pure-control-group">
+                @Html.LabelFor(m => m.Mac)
+                <span>@Model.Mac</span>
+            </div> 
+            <div class="pure-control-group">
                 @Html.LabelFor(m => m.Roles)
                 <span>
                     @for (int i = 0; i < Model.Roles.Length; i++)

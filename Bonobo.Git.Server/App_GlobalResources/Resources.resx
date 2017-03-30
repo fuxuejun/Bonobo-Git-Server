@@ -951,4 +951,13 @@ The regular C# string formatting rules apply: To get {} in your link you need to
   <data name="Home_About_Title" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="Account_Create_Mac" xml:space="preserve">
+    <value>Mac</value>
+  </data>
+  <data name="Account_Detail_Mac" xml:space="preserve">
+    <value>Mac</value>
+  </data>
+  <data name="Account_Edit_Mac" xml:space="preserve">
+    <value>Mac</value>
+  </data>
 </root>

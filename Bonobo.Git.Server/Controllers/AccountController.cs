@@ -162,7 +162,7 @@ namespace Bonobo.Git.Server.Controllers
 
                 if (valid)
                 {
-                    MembershipService.UpdateUser(model.Id, model.Username, model.Name, model.Surname, model.Email, model.NewPassword);
+                    MembershipService.UpdateUser(model.Id, model.Username, model.Name, model.Surname, model.Email, model.Mac, model.NewPassword);
                     RoleProvider.RemoveUserFromRoles(model.Id, RoleProvider.GetAllRoles());
                     if (model.PostedSelectedRoles != null)
                     {
@@ -244,7 +244,7 @@ namespace Bonobo.Git.Server.Controllers
 
             if (ModelState.IsValid)
             {
-                if (MembershipService.CreateUser(model.Username, model.Password, model.Name, model.Surname, model.Email))
+                if (MembershipService.CreateUser(model.Username, model.Password, model.Name, model.Surname, model.Mac, model.Email))
                 {
                     if (User.IsInRole(Definitions.Roles.Administrator))
                     {

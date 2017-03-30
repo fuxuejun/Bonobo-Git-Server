@@ -9,6 +9,7 @@ namespace Bonobo.Git.Server.Security
     {
         Success,
         Failure,
+        MacNotEqual,
         NotAuthorized
     }
 }

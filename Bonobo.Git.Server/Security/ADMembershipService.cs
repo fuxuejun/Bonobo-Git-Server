@@ -80,7 +80,7 @@ namespace Bonobo.Git.Server.Security
 			return false;
 		}
 
-		public bool CreateUser(string username, string password, string givenName, string surname, string email)
+		public bool CreateUser(string username, string password, string givenName, string surname, string mac, string email)
 		{
 			return false;
 		}
@@ -110,6 +110,11 @@ namespace Bonobo.Git.Server.Security
 			return null;
 		}
 
+		public void UpdateUser(Guid id, string username, string givenName, string surname, string email, string mac, string password)
+		{
+			throw new NotImplementedException();
+		}
+
 		public UserModel GetUserModel(Guid id)
 		{
 			return ADBackend.Instance.Users[id];
@@ -119,12 +124,7 @@ namespace Bonobo.Git.Server.Security
 		{
 			return String.IsNullOrEmpty(username) && !string.IsNullOrEmpty(username.GetDomain());
 		}
-
-		public void UpdateUser(Guid id, string username, string givenName, string surname, string email, string password)
-		{
-			throw new NotImplementedException();
-		}
-
+		
 		public void DeleteUser(Guid id)
 		{
 			throw new NotImplementedException();

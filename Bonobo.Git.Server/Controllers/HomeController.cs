@@ -69,7 +69,7 @@ namespace Bonobo.Git.Server.Controllers
         public ActionResult ResetPassword(string digest)
         {
             string username = CheckForPasswordResetUsername(digest);
-            if (username != null )
+            if (username != null)
             {
                 using (var db = new BonoboGitServerContext())
                 {
@@ -78,7 +78,7 @@ namespace Bonobo.Git.Server.Controllers
                     {
                         throw new UnauthorizedAccessException("Unknown user " + username);
                     }
-                    return View(new ResetPasswordModel { Username = username, Digest = digest});
+                    return View(new ResetPasswordModel { Username = username, Digest = digest });
                 }
             }
             else
@@ -109,7 +109,7 @@ namespace Bonobo.Git.Server.Controllers
                     }
                     else
                     {
-                        MembershipService.UpdateUser(user.Id, null, null, null, null, model.Password);
+                        MembershipService.UpdateUser(user.Id, null, null, null, null, null, model.Password);
                         TempData["ResetSuccess"] = true;
                     }
                 }
@@ -140,7 +140,7 @@ namespace Bonobo.Git.Server.Controllers
                     MvcApplication.Cache.Add(token, model.Username, DateTimeOffset.Now.AddHours(1));
 
                     // Passing Requust.Url.Scheme to Url.Action forces it to generate a full URL
-                    var resetUrl = Url.Action("ResetPassword", "Home", new {digest = HttpUtility.UrlEncode(Encoding.UTF8.GetBytes(token))},Request.Url.Scheme);
+                    var resetUrl = Url.Action("ResetPassword", "Home", new { digest = HttpUtility.UrlEncode(Encoding.UTF8.GetBytes(token)) }, Request.Url.Scheme);
 
                     TempData["SendSuccess"] = MembershipHelper.SendForgotPasswordEmail(user, resetUrl);
                 }
@@ -188,18 +188,22 @@ namespace Bonobo.Git.Server.Controllers
                     case ValidationResult.Success:
                         AuthenticationProvider.SignIn(model.Username, Url.IsLocalUrl(model.ReturnUrl) ? model.ReturnUrl : Url.Action("Index", "Home"), model.RememberMe);
                         Response.AppendToLog("SUCCESS");
-                        if (Request.IsLocal && model.DatabaseResetCode > 0 && model.Username == "admin" && ConfigurationManager.AppSettings["AllowDBReset"] == "true" )
+                        if (Request.IsLocal && model.DatabaseResetCode > 0 && model.Username == "admin" && ConfigurationManager.AppSettings["AllowDBReset"] == "true")
                         {
                             ResetManager.DoReset(model.DatabaseResetCode);
                         }
                         return new EmptyResult();
                     case ValidationResult.NotAuthorized:
                         return new RedirectResult("~/Home/Unauthorized");
+                    case ValidationResult.MacNotEqual:
+                        ModelState.AddModelError("Mac地址不匹配。", Resources.Home_LogOn_UsernamePasswordIncorrect);
+                        Response.AppendToLog("FAILURE");
+                        break;
                     default:
                         ModelState.AddModelError("", Resources.Home_LogOn_UsernamePasswordIncorrect);
                         Response.AppendToLog("FAILURE");
                         break;
-                }                
+                }
             }
 
             return View(model);

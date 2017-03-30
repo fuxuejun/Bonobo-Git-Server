@@ -43,7 +43,8 @@ namespace Bonobo.Git.Server.Data.Update.Sqlite
                         [Username] VarChar(255) Not Null UNIQUE,
                         [Password] VarChar(255) Not Null,
                         [PasswordSalt] VarChar(255) Not Null,
-                        [Email] VarChar(255) Not Null
+                        [Email] VarChar(255) Not Null,
+                        [Mac] VarChar(255) Not Null
                     );
 
                     CREATE TABLE IF NOT EXISTS [TeamRepository_Permission] (
