@@ -28,7 +28,7 @@ namespace Bonobo.Git.Server
 
         public IEnumerable<string> GetBranches()
         {
-            return _repository.Branches.Select(s => s.RemoteName).ToList();
+            return _repository.Branches.Select(s => s.FriendlyName).ToList();
         }
 
         public IEnumerable<string> GetTags()
@@ -289,14 +289,14 @@ namespace Bonobo.Git.Server
 
             if (string.IsNullOrEmpty(name))
             {
-                referenceName = _repository.Head.RemoteName;
+                referenceName = _repository.Head.FriendlyName;
                 return _repository.Head.Tip;
             }
 
             var branch = _repository.Branches[name];
             if (branch != null && branch.Tip != null)
             {
-                referenceName = branch.RemoteName;
+                referenceName = branch.FriendlyName;
                 return branch.Tip;
             }
 
