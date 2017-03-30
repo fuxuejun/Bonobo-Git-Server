@@ -127,6 +127,7 @@ namespace Bonobo.Git.Server.Security
                     GivenName = item.GivenName,
                     Surname = item.Surname,
                     Email = item.Email,
+                    Mac = item.Mac
                 }).ToList();
             }
         }
@@ -148,7 +149,8 @@ namespace Bonobo.Git.Server.Security
                 GivenName = user.GivenName,
                 Surname = user.Surname,
                 Email = user.Email,
-             };
+                Mac = user.Mac
+            };
         }
 
         public UserModel GetUserModel(Guid id)

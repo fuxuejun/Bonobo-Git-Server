@@ -23,6 +23,7 @@ namespace Bonobo.Git.Server.Data.Mapping
             Property(t => t.Password).HasColumnName("Password");
             Property(t => t.PasswordSalt).HasColumnName("PasswordSalt");
             Property(t => t.Email).HasColumnName("Email");
+            Property(t => t.Mac).HasColumnName("Mac");
         }
 
         private void SetProperties()
@@ -44,6 +45,10 @@ namespace Bonobo.Git.Server.Data.Mapping
                 .HasMaxLength(255);
 
             Property(t => t.Email)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            Property(t => t.Mac)
                 .IsRequired()
                 .HasMaxLength(255);
         }
