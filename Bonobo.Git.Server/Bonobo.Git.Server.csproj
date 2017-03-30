@@ -272,6 +272,7 @@
     <Compile Include="Data\Update\Sqlite\AddGroup.cs" />
     <Compile Include="Data\Update\Sqlite\AddGuidColumn.cs" />
     <Compile Include="Data\Update\Sqlite\AddRepoPushColumn.cs" />
+    <Compile Include="Data\Update\Sqlite\AddUserMacColumn.cs" />
     <Compile Include="Data\Update\SqlServer\AddGroup.cs" />
     <Compile Include="Data\Update\SqlServer\AddRepoPushColumn.cs" />
     <Compile Include="Data\Update\Sqlite\AddRepoLinksColumns.cs" />

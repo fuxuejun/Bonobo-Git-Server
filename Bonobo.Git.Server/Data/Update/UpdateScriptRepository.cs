@@ -23,7 +23,8 @@ namespace Bonobo.Git.Server.Data.Update
                         new Sqlite.AddGuidColumn(),
                         new Sqlite.AddRepoPushColumn(),
                         new Sqlite.AddRepoLinksColumn(),
-                        new Sqlite.InsertDefaultData()
+                        new Sqlite.InsertDefaultData(),
+                        new Sqlite.AddUserMacColumn()
                     };
                 case "SqlConnection":
                     return new List<IUpdateScript>
