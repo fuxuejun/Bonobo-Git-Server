@@ -52,7 +52,7 @@
                                             versionfolder,
                                             GitVersion);
                     Log.LogMessage("Url: {0}", url);
-                    webClient.DownloadFile(url, OutputFilename);
+                    // webClient.DownloadFile(url, OutputFilename);
                     return true;
                 }
                 catch (Exception ex) {
