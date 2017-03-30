@@ -14,63 +14,56 @@ using Bonobo.Git.Server.Models;
 using System.Web.Security;
 using System.Security.Principal;
 using Bonobo.Git.Server.Configuration;
+using Bonobo.Git.Server.Helpers;
 
 namespace Bonobo.Git.Server.Security
 {
-	public class ADMembershipService : IMembershipService
-	{
-		public bool IsReadOnly()
-		{
-			return true;
-		}
+    public class ADMembershipService : IMembershipService
+    {
+        public bool IsReadOnly()
+        {
+            return true;
+        }
 
-		public ValidationResult ValidateUser(string username, string password)
-		{
-			ValidationResult result = ValidationResult.Failure;
+        public ValidationResult ValidateUser(string username, string password)
+        {
+            ValidationResult result = ValidationResult.Failure;
 
-			if (String.IsNullOrEmpty(username)) throw new ArgumentException("Value cannot be null or empty", "username");
-			if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty", "password");
+            if (String.IsNullOrEmpty(username)) throw new ArgumentException("Value cannot be null or empty", "username");
+            if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty", "password");
 
-			try
-			{
-				string domain = username.GetDomain();
-				if (String.IsNullOrEmpty(domain))
-				{
-					domain = Configuration.ActiveDirectorySettings.DefaultDomain;
-				}
-
-				using (PrincipalContext principalContext = new PrincipalContext(ContextType.Domain, domain))
-				{
-					if (principalContext.ValidateCredentials(username, password, ContextOptions.Negotiate))
-					{
-						using (UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, username))
+            try
+            {
+                if (ADHelper.ValidateUser(username, password))
+                {
+                    using (var user = ADHelper.GetUserPrincipal(username))
+                    {
+                        GroupPrincipal group;
+						using (var pc = ADHelper.GetMembersGroup(out group))
 						{
-							using (GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, Configuration.ActiveDirectorySettings.MemberGroupName))
-							{
-								if (group == null)
-									result = ValidationResult.Failure;
+							if (group == null)
+								result = ValidationResult.Failure;
 
-								if (user != null)
+							if (user != null)
+							{
+								if (!group.GetMembers(true).Contains(user))
 								{
-									if (!group.GetMembers(true).Contains(user))
-									{
-										result = ValidationResult.NotAuthorized;
-									}
-									else
-									{
-										result = ValidationResult.Success;
-									}
+									result = ValidationResult.NotAuthorized;
+								}
+								else
+								{
+									result = ValidationResult.Success;
 								}
 							}
 						}
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.TraceError("AD.ValidateUser Exception: " + ex);
-				result = ValidationResult.Failure;
-			}
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Trace.TraceError("AD.ValidateUser Exception: " + ex);
+                result = ValidationResult.Failure;
+            }
 
 			return result;
 		}
@@ -91,24 +84,14 @@ namespace Bonobo.Git.Server.Security
 			return users;
 		}
 
-		public UserModel GetUserModel(string username)
-		{
-			if (!UsernameContainsDomain(username))
-			{
-				using (PrincipalContext principalContext = new PrincipalContext(ContextType.Domain, ActiveDirectorySettings.DefaultDomain))
-				using (UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, username))
-				{
-					// assuming all users have a guid on AD
-					return ADBackend.Instance.Users.FirstOrDefault(n => n.Id == user.Guid.Value);
-				}
-			}
-			else if (!string.IsNullOrEmpty(username))
-			{
-				return ADBackend.Instance.Users.Where(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-			}
-
-			return null;
-		}
+        public UserModel GetUserModel(string username)
+        {
+            using (var upc = ADHelper.GetUserPrincipal(username))
+            {
+                return ADBackend.Instance.Users.FirstOrDefault(n => n.Id == upc.Guid.Value);
+            }
+            throw new ArgumentException("User was not found with username: " + username);
+        }
 
 		public void UpdateUser(Guid id, string username, string givenName, string surname, string email, string mac, string password)
 		{
