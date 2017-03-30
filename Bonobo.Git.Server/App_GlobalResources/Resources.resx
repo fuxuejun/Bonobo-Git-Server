@@ -960,4 +960,7 @@ The regular C# string formatting rules apply: To get {} in your link you need to
   <data name="Account_Edit_Mac" xml:space="preserve">
     <value>Mac</value>
   </data>
+  <data name="Home_LogOn_MacNotEqual" xml:space="preserve">
+    <value>Mac Address Not Equal With User.</value>
+  </data>
 </root>

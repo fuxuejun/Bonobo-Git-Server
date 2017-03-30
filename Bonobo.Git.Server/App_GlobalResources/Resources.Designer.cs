@@ -729,6 +729,15 @@ namespace Bonobo.Git.Server.App_GlobalResources {
         }
         
         /// <summary>
+        ///   查找类似 Mac Address Not Equal With User. 的本地化字符串。
+        /// </summary>
+        public static string Home_LogOn_MacNotEqual {
+            get {
+                return ResourceManager.GetString("Home_LogOn_MacNotEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Password 的本地化字符串。
         /// </summary>
         public static string Home_LogOn_Password {

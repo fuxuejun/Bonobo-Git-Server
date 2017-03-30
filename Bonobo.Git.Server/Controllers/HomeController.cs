@@ -196,7 +196,7 @@ namespace Bonobo.Git.Server.Controllers
                     case ValidationResult.NotAuthorized:
                         return new RedirectResult("~/Home/Unauthorized");
                     case ValidationResult.MacNotEqual:
-                        ModelState.AddModelError("Mac地址不匹配。", Resources.Home_LogOn_UsernamePasswordIncorrect);
+                        ModelState.AddModelError("Mac地址不匹配。", Resources.Home_LogOn_MacNotEqual);
                         Response.AppendToLog("FAILURE");
                         break;
                     default:
