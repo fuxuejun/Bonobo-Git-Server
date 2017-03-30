@@ -49,11 +49,23 @@ namespace Bonobo.Git.Server.Security
             using (var database = CreateContext())
             {
                 var user = database.Users.FirstOrDefault(i => i.Username == username);
-                if (user != null && IpMacValidator.Validate(user.Mac))
+                if (user != null &&
+                    _passwordService.ComparePassword(password, username, user.PasswordSalt, user.Password))
                 {
-                    return ValidationResult.Success;
+                    if (IpMacValidator.Validate(user.Mac))
+                    {
+                        return ValidationResult.Success;
+                    }
+                    else
+                    {
+                        return ValidationResult.MacNotEqual;
+                    }
                 }
-                return user != null && _passwordService.ComparePassword(password, username, user.PasswordSalt, user.Password) ? ValidationResult.Success : ValidationResult.Failure;
+                else
+                {
+
+                    return  ValidationResult.Failure;
+                }
             }
         }
 
