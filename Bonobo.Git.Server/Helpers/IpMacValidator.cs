@@ -18,6 +18,11 @@ namespace Bonobo.Git.Server.Helpers
                 return false;
             }
 
+            if (userIp == "127.0.0.1")
+            {
+                return true;
+            }
+
             var mac = GetMacAddress(userIp);
 
             // TODO 通过vpn进来的获取不到mac地址，添加反向代理服务器取得真实ip
