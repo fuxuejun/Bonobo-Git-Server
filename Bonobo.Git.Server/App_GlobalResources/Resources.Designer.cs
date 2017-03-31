@@ -729,7 +729,7 @@ namespace Bonobo.Git.Server.App_GlobalResources {
         }
         
         /// <summary>
-        ///   查找类似 Mac Address Not Equal With User. 的本地化字符串。
+        ///   查找类似 Mac Address Or IP Not Equal With User. 的本地化字符串。
         /// </summary>
         public static string Home_LogOn_MacNotEqual {
             get {

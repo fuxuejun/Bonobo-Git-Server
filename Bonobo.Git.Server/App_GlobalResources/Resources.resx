@@ -961,6 +961,6 @@ The regular C# string formatting rules apply: To get {} in your link you need to
     <value>Mac</value>
   </data>
   <data name="Home_LogOn_MacNotEqual" xml:space="preserve">
-    <value>Mac Address Not Equal With User.</value>
+    <value>Mac Address Or IP Not Equal With User.</value>
   </data>
 </root>
