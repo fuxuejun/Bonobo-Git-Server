@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Web;
+using Bonobo.Git.Server.Configuration;
 
 namespace Bonobo.Git.Server.Helpers
 {
@@ -25,20 +26,21 @@ namespace Bonobo.Git.Server.Helpers
 
             var mac = GetMacAddress(userIp);
 
-            // TODO 通过vpn进来的获取不到mac地址，添加反向代理服务器取得真实ip
-            if (userIp.Contains("192.168.0") && mac == "00-0C-29-5A-68-A8")
+            // ip:mac,ip:mac
+            // 如果是由统一网关访问，判断IP
+            if (AppSettings.GateWayMacs.Contains(mac) && macVerify.Contains(userIp))
             {
                 return true;
             }
 
             return mac.Contains(macVerify);
         }
-        [DllImport("Iphlpapi.dll")]
 
+        [DllImport("Iphlpapi.dll")]
         static extern int SendARP(Int32 destIp, Int32 srcIp, ref Int64 macAddr, ref Int32 phyAddrLen);
         [DllImport("Ws2_32.dll")]
-
         static extern Int32 inet_addr(string ipaddr);
+
         ///<summary>  
         /// SendArp获取MAC地址  
         ///</summary>  

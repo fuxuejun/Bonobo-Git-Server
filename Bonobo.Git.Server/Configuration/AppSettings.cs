@@ -15,5 +15,10 @@ namespace Bonobo.Git.Server.Configuration
                 return bool.Parse(ConfigurationManager.AppSettings["IsPushAuditEnabled"] ?? "false");
             }
         }
+
+        public static string GateWayMacs
+        {
+            get { return ConfigurationManager.AppSettings["GateWayMacs"]; }
+        }
     }
 }
