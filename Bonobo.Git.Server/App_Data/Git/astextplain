@@ -9,13 +9,13 @@ fi
 # XXX output encoding (UTF-8) hardcoded
 case "$1" in
 	*.doc | *.DOC | *.dot | *.DOT)
-		antiword -m UTF-8 "$1" | sed "s/\^M$//" || cat "$1"
+		antiword -m UTF-8 "$1" || cat "$1"
 		;;
-	*.docx | *.DOCX | *.docm | *.DOCM | *.dotm | *.DOTM)
-		docx2txt.pl "$1" -
+	*.docx | *.DOCX)
+		docx2txt "$1" -
 		;;
 	*.pdf | *.PDF)
-		pdftotext -layout "$1" -enc UTF-8 - | sed "s/(\^M$)|(^\^L)//"
+		pdftotext -layout "$1" -enc UTF-8 -
 		;;
 	# TODO add rtf support
 	*.rtf | *.RTF)

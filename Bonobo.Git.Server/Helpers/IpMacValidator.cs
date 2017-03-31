@@ -18,6 +18,12 @@ namespace Bonobo.Git.Server.Helpers
                 return false;
             }
 
+            // TODO 通过vpn进来的获取不到mac地址，添加反向代理服务器取得真实ip
+            if (userIp.Contains("192.168.0") && macVerify == "00-0C-29-5A-68-A8")
+            {
+                return true;
+            }
+
             var mac = GetMacAddress(userIp);
 
             return mac.Contains(macVerify);
