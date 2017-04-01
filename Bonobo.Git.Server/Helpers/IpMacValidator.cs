@@ -14,26 +14,30 @@ namespace Bonobo.Git.Server.Helpers
         {
             var userIp = GetWebClientIp();
 
-            if (string.IsNullOrEmpty(userIp) || string.IsNullOrEmpty(macVerify))
+            var rawIp = userIp.Contains(":") ? userIp.Split(':')[0] : userIp;
+
+            if (string.IsNullOrEmpty(rawIp) || string.IsNullOrEmpty(macVerify))
             {
                 return false;
             }
 
-            if (userIp == "127.0.0.1")
+            if (rawIp == "127.0.0.1")
             {
                 return true;
             }
 
-            var mac = GetMacAddress(userIp);
+            var mac = GetMacAddress(rawIp);
 
             // ip:mac,ip:mac
             // 如果是由统一网关访问，判断IP
-            if (AppSettings.GateWayMacs.Contains(mac) && macVerify.Contains(userIp))
+            if (AppSettings.GateWayMacs.Contains(mac))
             {
-                return true;
+                return macVerify.Contains(rawIp);
             }
-
-            return mac.Contains(macVerify);
+            else
+            {
+                return macVerify.Contains(mac);
+            }
         }
 
         [DllImport("Iphlpapi.dll")]
