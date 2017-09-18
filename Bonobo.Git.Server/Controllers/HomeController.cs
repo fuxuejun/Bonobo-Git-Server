@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -35,7 +34,6 @@ namespace Bonobo.Git.Server.Controllers
         [Dependency]
         public IDatabaseResetManager ResetManager { get; set; }
 
-        [WebAuthorize]
         public ActionResult Index()
         {
             return RedirectToAction("Index", "Repository");

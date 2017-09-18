@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Bonobo.Git.Server.Configuration;
 using Bonobo.Git.Server.Models;
 using Microsoft.Practices.Unity;
+using Serilog;
 
 namespace Bonobo.Git.Server.Security
 {
@@ -47,17 +48,27 @@ namespace Bonobo.Git.Server.Security
             return Repository.GetAllRepositories().Where(repo => HasPermission(userId, userTeams, userIsSystemAdministrator, repo, requiredLevel));
         }
 
-        private bool HasPermission(Guid userId, IList<TeamModel> userTeams, bool userIsSystemAdministrator, RepositoryModel repositoryModel, RepositoryAccessLevel requiredLevel)
+        private bool HasPermission(Guid userId, IList<TeamModel> userTeams, bool userIsSystemAdministrator,
+            RepositoryModel repositoryModel, RepositoryAccessLevel requiredLevel)
         {
+            // All users can take advantage of the anonymous permissions
+            if (CheckAnonymousPermission(repositoryModel, requiredLevel))
+            {
+                Log.Verbose(
+                    "RepoPerms: Permitting user {UserId} anonymous permission {Permission} on repo {RepositoryName}",
+                    userId,
+                    requiredLevel,
+                    repositoryModel.Name);
+                return true;
+            }
             if (userId == Guid.Empty)
             {
-                // This is an anonymous user, the rules are different
-                return CheckAnonymousPermission(repositoryModel, requiredLevel);
+                // We have no named user
+                return false;
             }
-            else
-            {
-                return CheckNamedUserPermission(userId, userTeams, userIsSystemAdministrator, repositoryModel, requiredLevel);
-            }
+
+            // Named users have more possibilities
+            return CheckNamedUserPermission(userId, userTeams, userIsSystemAdministrator, repositoryModel, requiredLevel);
         }
 
         private bool CheckAnonymousPermission(RepositoryModel repository, RepositoryAccessLevel requiredLevel)
@@ -87,6 +98,12 @@ namespace Bonobo.Git.Server.Security
             if (userId == Guid.Empty) { throw new ArgumentException("Do not pass anonymous user id", "userId"); }
 
             bool userIsAnAdministrator = userIsSystemAdministrator || repository.Administrators.Any(x => x.Id == userId);
+
+            Log.Verbose("RepoPerms: Checking user {UserId} (admin? {IsAdmin}) has permission {Permission} on repo {RepositoryName}",
+                userId,
+                userIsAnAdministrator,
+                requiredLevel,
+                repository.Name);
 
             switch (requiredLevel)
             {

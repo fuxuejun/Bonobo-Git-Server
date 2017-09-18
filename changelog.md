@@ -4,6 +4,88 @@ description: Tracks changes and bug fixes between different versions of Bonobo G
 tags: [Changelog, Changes, Bug Fixes, Features]
 ---
 
+## Version 6.3.0
+
+**5 September 2017**
+
+### Features
+
+* Allow named users to browse anonymous repos for which they don't have
+  explicit permission #708
+* Allow custom CSS files #705
+
+### Bugfixes
+
+* Fix regression in 6.2.2 for certain domain configurations #731/#733
+
+### Other improvements 
+
+* Update compiler used for pages #702
+
+
+## Version 6.2.2
+
+**28 August 2017**
+
+### Features
+
+* Allow anonymous users to browse repos without credentials where permitted #710 / @jeffgaroutte
+
+### Bugfixes
+
+* Don't unescape Git passwords/usernames unnecessarily #704
+* Improvements to AD domain handling #706
+
+### Other improvements 
+
+* Enable README display for all folders #713
+* Turkish translation improvements #722
+
+## Version 6.2.1
+
+**22 May 2017**
+
+This is identical to 6.2.0, but with corrected version numbering in the appveyor build.
+
+## Version 6.2.0
+
+**15 May 2017**
+
+### Features
+
+* Broader search for AD domain #683
+* Reintroduce ActiveDirectoryDefaultDomain configuration item (helps #683)
+
+### Bugfixes
+
+* Revert Jwt library to v4.x to repair ADFS login #681
+* Reintroduce ActiveDirectoryDefaultDomain configuration item #685
+
+### Other improvements 
+
+* Permissions for unknown Windows users are set more sensibly when using internal membership #687
+* pt-BR translation improvements #678
+* All logging now moved to new app_data\logs files
+
+## Version 6.1
+
+**12 April 2017**
+
+### Features
+
+* Enhanced logging - daily rotating log files written to App_Data\Logs, log level controllable in Web.Config
+
+### Bugfixes
+
+* Fix problem with Git authentication with using the Windows Auth + EF Membership approach #668
+* Don't throw exception if GitAuth token doesn't contain colon #664
+
+### Other improvements 
+
+* Improved French translation #670
+* Updated libgit2sharp #650
+* Updated CommonMark #651
+
 ## Version 6.0.0
 
 **29 March 2017**

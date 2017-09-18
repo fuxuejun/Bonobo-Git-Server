@@ -2165,7 +2165,25 @@ namespace Bonobo.Git.Server.App_GlobalResources {
         }
         
         /// <summary>
-        ///   查找类似 Site Footer Message 的本地化字符串。
+        ///   Looks up a localized string similar to Site CSS URL.
+        /// </summary>
+        public static string Settings_Global_SiteCssUrl {
+            get {
+                return ResourceManager.GetString("Settings_Global_SiteCssUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL to a CSS file to use for the site.  Site-relative (~) paths are supported..
+        /// </summary>
+        public static string Settings_Global_SiteCssUrl_Hint {
+            get {
+                return ResourceManager.GetString("Settings_Global_SiteCssUrl_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site Footer Message.
         /// </summary>
         public static string Settings_Global_SiteFooterMessage {
             get {

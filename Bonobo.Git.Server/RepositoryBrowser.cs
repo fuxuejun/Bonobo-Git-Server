@@ -9,6 +9,7 @@ using System.IO;
 using Bonobo.Git.Server.Helpers;
 using System.Text.RegularExpressions;
 using Bonobo.Git.Server.Configuration;
+using Serilog;
 
 namespace Bonobo.Git.Server
 {
@@ -20,6 +21,7 @@ namespace Bonobo.Git.Server
         {
             if (!Repository.IsValid(repositoryPath))
             {
+                Log.Error("Invalid repo path {RespositoryPath}", repositoryPath);
                 throw new ArgumentException("Repository is not valid.", "repositoryPath");
             }
 
@@ -158,14 +160,18 @@ namespace Bonobo.Git.Server
                 model.Data = memoryStream.ToArray();
             }
 
-            model.Text = FileDisplayHandler.GetText(model.Data);
-            model.Encoding = FileDisplayHandler.GetEncoding(model.Data);
-            model.IsText = model.Text != null;
-            model.IsMarkdown = model.IsText && Path.GetExtension(path).Equals(".md", StringComparison.OrdinalIgnoreCase);
+            Encoding encoding;
+            if(FileDisplayHandler.TryGetEncoding(model.Data, out encoding))
+            {
+                model.Text = FileDisplayHandler.GetText(model.Data, encoding);
+                model.Encoding = encoding;
+                model.IsText = model.Text != null;
+                model.IsMarkdown = model.IsText && Path.GetExtension(path).Equals(".md", StringComparison.OrdinalIgnoreCase);
+            }
             model.TextBrush = FileDisplayHandler.GetBrush(path);
 
             // try to render as text file if the extension matches
-            if (model.TextBrush != FileDisplayHandler.NoBrush && model.IsText == false)
+            if (model.TextBrush != FileDisplayHandler.NoBrush && !model.IsText)
             {
                 model.IsText = true;
                 model.Encoding = Encoding.Default;
