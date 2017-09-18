@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Data.Entity.Core;
 using Bonobo.Git.Server.Helpers;
 using Microsoft.Practices.Unity;
+using Serilog;
 
 namespace Bonobo.Git.Server.Security
 {
@@ -45,28 +46,27 @@ namespace Bonobo.Git.Server.Security
             if (String.IsNullOrEmpty(username)) throw new ArgumentException("Value cannot be null or empty.", "username");
             if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
 
+            Log.Verbose("EF: Validating user {UserName}", username);
+
             username = username.ToLowerInvariant();
             using (var database = CreateContext())
             {
                 var user = database.Users.FirstOrDefault(i => i.Username == username);
-                if (user != null &&
-                    _passwordService.ComparePassword(password, username, user.PasswordSalt, user.Password))
+                if (user != null)
                 {
-                    if (IpMacValidator.Validate(user.Mac))
-                    {
-                        return ValidationResult.Success;
-                    }
-                    else
-                    {
-                        return ValidationResult.MacNotEqual;
-                    }
+                    var result = _passwordService.ComparePassword(password, username, user.PasswordSalt, user.Password)
+                         && IpMacValidator.Validate(user.Mac)
+                        ? ValidationResult.Success
+                        : ValidationResult.Failure;
+                    Log.Verbose("EF: User {UserName} validation result {Result}", username, result);
+                    return result;
                 }
                 else
                 {
-
-                    return  ValidationResult.Failure;
+                    Log.Warning("EF: Failed to find user {UserName}", username);
                 }
             }
+            return ValidationResult.Failure;
         }
 
         public bool CreateUser(string username, string password, string givenName, string surname, string mac, string email)

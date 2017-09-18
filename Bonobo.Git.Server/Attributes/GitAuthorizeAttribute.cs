@@ -4,12 +4,11 @@ using System.Security.Claims;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.DirectoryServices.AccountManagement;
 using Bonobo.Git.Server.Data;
 using Bonobo.Git.Server.Security;
-
 using Microsoft.Practices.Unity;
 using Bonobo.Git.Server.Helpers;
+using Serilog;
 
 namespace Bonobo.Git.Server
 {
@@ -52,6 +51,7 @@ namespace Bonobo.Git.Server
             if (httpContext.Request.IsAuthenticated && httpContext.User != null && httpContext.User.Identity is System.Security.Claims.ClaimsIdentity)
             {
                 // We already have a claims id, we don't need to worry about the rest of these checks
+                Log.Verbose("GitAuth: User {username} already has identity", httpContext.User.DisplayName());
                 return;
             }
 
@@ -64,6 +64,7 @@ namespace Bonobo.Git.Server
                 {
                     // Allow this through.  If it turns out they're actually trying to do an anon push and that's not allowed for this repo
                     // then the GitController will reject them in there
+                    Log.Information("GitAuth: No auth header, anon operation may be allowed");
                     return;
                 }
                 else
@@ -72,6 +73,8 @@ namespace Bonobo.Git.Server
                     // and tell the other end to try again with an auth header included next time
                     httpContext.Response.Headers.Add("WWW-Authenticate", "Basic realm=\"Bonobo Git\"");
                     filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+
+                    Log.Warning("GitAuth: No auth header, anon operations not allowed");
                     return;
                 }
             }
@@ -87,17 +90,49 @@ namespace Bonobo.Git.Server
         {
             byte[] encodedDataAsBytes = Convert.FromBase64String(authHeader.Replace("Basic ", String.Empty));
             string value = Encoding.ASCII.GetString(encodedDataAsBytes);
-            string username = Uri.UnescapeDataString(value.Substring(0, value.IndexOf(':')));
-            string password = Uri.UnescapeDataString(value.Substring(value.IndexOf(':') + 1));
+
+            int colonPosition = value.IndexOf(':');
+            if (colonPosition == -1)
+            {
+                Log.Error("GitAuth: AuthHeader doesn't contain colon - failing auth");
+                return false;
+            }
+            string username = value.Substring(0, colonPosition);
+            string password = value.Substring(colonPosition + 1);
+
+            Log.Verbose("GitAuth: Trying to auth user {username}", username);
 
             if (!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password))
             {
-                if (MembershipService.ValidateUser(username, password) == ValidationResult.Success)
+                if (AuthenticationProvider is WindowsAuthenticationProvider && MembershipService is EFMembershipService)
                 {
-                    httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(AuthenticationProvider.GetClaimsForUser(username)));
-                    return true;
+                    Log.Verbose("GitAuth: Going to windows auth (EF Membership) for user {username}", username);
+                    if (ADHelper.ValidateUser(username, password))
+                    {
+                        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(AuthenticationProvider.GetClaimsForUser(username)));
+                        Log.Verbose("GitAuth: User {username} authorised by direct windows auth", username);
+                        return true;
+                    }
+                }
+                else
+                {
+                    Log.Verbose("GitAuth: Going to membership service for user {username}", username);
+
+                    if (MembershipService.ValidateUser(username, password) == ValidationResult.Success)
+                    {
+                        httpContext.User =
+                            new ClaimsPrincipal(new ClaimsIdentity(AuthenticationProvider.GetClaimsForUser(username)));
+                        Log.Verbose("GitAuth: User {username} authorised by membership service", username);
+                        return true;
+                    }
+                    Log.Warning("GitAuth: Membership service failed auth for {username}", username);
                 }
             }
+            else
+            {
+                Log.Warning("GitAuth: Blank name or password {username}", username);
+            }
+            Log.Warning("GitAuth: User {username} not authorized", username);
             return false;
         }
     }
