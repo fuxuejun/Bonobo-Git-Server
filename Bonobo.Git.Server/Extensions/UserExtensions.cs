@@ -68,7 +68,7 @@ namespace Bonobo.Git.Server
 
         public static string DisplayName(this IPrincipal user)
         {
-            return string.Format("{0} {1}", user.GetClaimValue(ClaimTypes.GivenName), user.GetClaimValue(ClaimTypes.Surname));
+            return string.Format("{0} {1}", user.GetClaimValue(ClaimTypes.Surname), user.GetClaimValue(ClaimTypes.GivenName));
         }
 
         public static bool IsWindowsAuthenticated(this IPrincipal user)

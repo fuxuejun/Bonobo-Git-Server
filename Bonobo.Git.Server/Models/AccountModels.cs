@@ -40,7 +40,7 @@ namespace Bonobo.Git.Server.Models
         {
             get
             {
-                var compositeName = String.Format("{0} {1}", GivenName, Surname).Trim();
+                var compositeName = String.Format("{0} {1}", Surname, GivenName).Trim();
                 if (String.IsNullOrEmpty(compositeName))
                 {
                     // Return the username if we don't have a GivenName or Surname

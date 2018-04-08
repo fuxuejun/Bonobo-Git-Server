@@ -12,6 +12,9 @@ namespace Bonobo.Git.Server.Helpers
     {
         public static bool Validate(string macVerify)
         {
+#if DEBUG
+            return true;
+#else
             var userIp = GetWebClientIp();
 
             var rawIp = userIp.Contains(":") ? userIp.Split(':')[0] : userIp;
@@ -38,6 +41,7 @@ namespace Bonobo.Git.Server.Helpers
             {
                 return macVerify.Contains(mac);
             }
+#endif
         }
 
         [DllImport("Iphlpapi.dll")]
